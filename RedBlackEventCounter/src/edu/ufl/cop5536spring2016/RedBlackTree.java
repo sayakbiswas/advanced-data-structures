@@ -24,20 +24,95 @@ public class RedBlackTree {
      * 4. Color
      */
     private class RedBlackTreeNode {
-        private int ID;
-        private int count;
-        private RedBlackTreeNode leftNode = null, rightNode = null;
-        private boolean color;
 
-        // The constructor to initialize a node
-        public RedBlackTreeNode(int ID, int count, boolean color) {
+        /**
+         * Holds the ID of the node
+         */
+        private int ID;
+
+        /**
+         * Holds the count value
+         */
+        private int count;
+
+        /**
+         * Hold the left and right children nodes and the parent node
+         */
+        private RedBlackTreeNode leftChild = null, rightChild = null, parent = null;
+
+        /**
+         * Holds the color of the node
+         */
+        private NodeColor nodeColor;
+
+        /**
+         * The constructor to initialize a node
+         * @param ID The key of the node
+         * @param count The data value of the node
+         */
+        public RedBlackTreeNode(int ID, int count) {
             this.ID = ID;
             this.count = count;
-            this.color = color;
+            this.nodeColor = NodeColor.RED; //Initialize nodes with RED nodeColor
         }
     }
 
-    // The red-black color notations
-    private static final boolean RED = false;
-    private static final boolean BLACK = true;
+    /**
+     * Holds the root node of the tree.
+     */
+    private RedBlackTreeNode rootNode = null;
+
+    // The red-black Color notations
+    private enum NodeColor {
+        RED,
+        BLACK
+    }
+
+    /**
+     * Builds a new node from ID and count and inserts into the tree.
+     * @param ID The key of the node to be inserted into the tree.
+     * @param count The data value of the node to be inserted into the tree.
+     */
+    public void redBlackInsert(int ID, int count) {
+        RedBlackTreeNode redBlackTreeNode = new RedBlackTreeNode(ID, count);
+        RedBlackTreeNode tempNode = rootNode;
+        if(tempNode == null) {
+            rootNode = redBlackTreeNode;
+            rootNode.nodeColor = NodeColor.BLACK; //The root node is always black.
+            rootNode.parent = null;
+        } else {
+            RedBlackTreeNode parent = null;
+            while (tempNode != null) {
+                parent = tempNode;
+                if(redBlackTreeNode.ID < tempNode.ID) {
+                    tempNode = tempNode.leftChild;
+                } else if (redBlackTreeNode.ID > tempNode.ID) {
+                    tempNode = tempNode.rightChild;
+                } else {
+                    tempNode.count = redBlackTreeNode.count;
+                    return;
+                }
+            }
+            redBlackTreeNode.parent = parent;
+            if(redBlackTreeNode.ID < parent.ID) {
+                parent.leftChild = redBlackTreeNode;
+            } else {
+                parent.rightChild = redBlackTreeNode;
+            }
+            redBlackInsertFixUp(redBlackTreeNode);
+        }
+    }
+
+    /**
+     * Restores the red black properties which might have been violated after insertion of a new node.
+     * @param redBlackTreeNode The newly inserted node.
+     */
+    private void redBlackInsertFixUp(RedBlackTreeNode redBlackTreeNode) {
+        while(redBlackTreeNode != rootNode && redBlackTreeNode.parent.nodeColor == NodeColor.RED) {
+            RedBlackTreeNode uncle = null;
+            if(redBlackTreeNode.parent == redBlackTreeNode.parent.parent.leftChild) {
+
+            }
+        }
+    }
 }
