@@ -109,10 +109,88 @@ public class RedBlackTree {
      */
     private void redBlackInsertFixUp(RedBlackTreeNode redBlackTreeNode) {
         while(redBlackTreeNode != rootNode && redBlackTreeNode.parent.nodeColor == NodeColor.RED) {
-            RedBlackTreeNode uncle = null;
             if(redBlackTreeNode.parent == redBlackTreeNode.parent.parent.leftChild) {
-
+                RedBlackTreeNode uncle = redBlackTreeNode.parent.parent.rightChild;
+                if(uncle != null && uncle.nodeColor == NodeColor.RED) {
+                    redBlackTreeNode.parent.nodeColor = NodeColor.BLACK;
+                    uncle.nodeColor = NodeColor.BLACK;
+                    redBlackTreeNode.parent.parent.nodeColor = NodeColor.RED;
+                    redBlackTreeNode = redBlackTreeNode.parent.parent;
+                } else {
+                    if(redBlackTreeNode == redBlackTreeNode.parent.rightChild) {
+                        redBlackTreeNode = redBlackTreeNode.parent;
+                        leftRotate(redBlackTreeNode);
+                    }
+                    redBlackTreeNode.parent.nodeColor = NodeColor.BLACK;
+                    redBlackTreeNode.parent.parent.nodeColor = NodeColor.RED;
+                    rightRotate(redBlackTreeNode);
+                }
+            } else {
+                RedBlackTreeNode uncle = redBlackTreeNode.parent.parent.leftChild;
+                if(uncle != null && uncle.nodeColor == NodeColor.RED) {
+                    redBlackTreeNode.parent.nodeColor = NodeColor.BLACK;
+                    uncle.nodeColor = NodeColor.BLACK;
+                    redBlackTreeNode.parent.parent.nodeColor = NodeColor.RED;
+                    redBlackTreeNode = redBlackTreeNode.parent.parent;
+                } else {
+                    if(redBlackTreeNode == redBlackTreeNode.parent.leftChild) {
+                        redBlackTreeNode = redBlackTreeNode.parent;
+                        rightRotate(redBlackTreeNode);
+                    }
+                    redBlackTreeNode.parent.nodeColor = NodeColor.BLACK;
+                    redBlackTreeNode.parent.parent.nodeColor = NodeColor.RED;
+                    leftRotate(redBlackTreeNode);
+                }
             }
+        }
+        rootNode.nodeColor = NodeColor.BLACK;
+    }
+
+    /**
+     * Performs left rotation on the subtree to restore balance.
+     * @param redBlackTreeNode The node on which left rotation has to be performed.
+     */
+    private void leftRotate(RedBlackTreeNode redBlackTreeNode) {
+        if(redBlackTreeNode != null) {
+            RedBlackTreeNode right = redBlackTreeNode.rightChild;
+            redBlackTreeNode.rightChild = right.leftChild; //Turn right's left subtree into redBlackTreeNode's right subtree.
+            if(right.leftChild != null) {
+                right.leftChild.parent = redBlackTreeNode;
+            }
+            right.parent = redBlackTreeNode.parent; //Link redBlackTreeNode's parent to right
+            if(redBlackTreeNode.parent == null) {
+                rootNode = right;
+            } else if(redBlackTreeNode == redBlackTreeNode.parent.leftChild) {
+                redBlackTreeNode.parent.leftChild = right;
+            } else {
+                redBlackTreeNode.parent.rightChild = right;
+            }
+            right.leftChild = redBlackTreeNode; //Put redBlackTreeNode on right's left
+            redBlackTreeNode.parent = right;
+        }
+    }
+
+    /**
+     * Performs right rotation on the subtree to restore balance.
+     * @param redBlackTreeNode The node on which left rotation has to be performed.
+     */
+    private  void rightRotate(RedBlackTreeNode redBlackTreeNode) {
+        if(redBlackTreeNode != null) {
+            RedBlackTreeNode left = redBlackTreeNode.leftChild;
+            redBlackTreeNode.leftChild = left.rightChild; //Turn left's right subtree into redBlackTreeNode's left subtree.
+            if(left.rightChild != null) {
+                left.rightChild.parent = redBlackTreeNode;
+            }
+            left.parent = redBlackTreeNode.parent; //Link redBlackTreeNode's parent to left
+            if(redBlackTreeNode.parent == null) {
+                rootNode = left;
+            } else if(redBlackTreeNode == redBlackTreeNode.parent.rightChild) {
+                redBlackTreeNode.parent.rightChild = left;
+            } else {
+                redBlackTreeNode.parent.rightChild = left;
+            }
+            left.rightChild = redBlackTreeNode; //Put redBlackTreeNode on left's right
+            redBlackTreeNode.parent = left;
         }
     }
 }
