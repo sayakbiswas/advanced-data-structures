@@ -1,5 +1,8 @@
 package edu.ufl.cop5536spring2016;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /**
  * Created by Sayak Biswas on 3/4/2016.
  * This class defines the Red Black Tree data structure to be used for the event counter and exposes the below
@@ -7,9 +10,13 @@ package edu.ufl.cop5536spring2016;
  * 1. Insert
  * 2. Delete
  * 3. Search
- *
+ * 4. Minimum
+ * 5. Maximum
+ * 6. Successor
+ * 7. Predecessor
+ * 8. BuildTree
+ * 9. RangeSearch
  * @author Sayak Biswas
- * @version 0.1
  */
 public class RedBlackTree {
 
@@ -20,7 +27,7 @@ public class RedBlackTree {
      * 3. References to left and right children
      * 4. Color
      */
-    private class RedBlackTreeNode {
+    class RedBlackTreeNode {
 
         /**
          * Holds the ID of the node
@@ -54,6 +61,14 @@ public class RedBlackTree {
         }
 
         /**
+         * Returns the ID of a node.
+         * @return The ID
+         */
+        public int getID() {
+            return ID;
+        }
+
+        /**
          * Returns the count value stored in the node.
          * @return The value of the node
          */
@@ -74,6 +89,14 @@ public class RedBlackTree {
      * Holds the root node of the tree.
      */
     private RedBlackTreeNode rootNode = null;
+
+    /**
+     * Returns a reference to the root node.
+     * @return The reference to the root node.
+     */
+    public RedBlackTreeNode getRootNode() {
+        return rootNode;
+    }
 
     // The red-black Color notations
     private enum NodeColor {
@@ -263,9 +286,21 @@ public class RedBlackTree {
      * @param redBlackTreeNode The node which is a root of the subtree which needs to be searched for minimum.
      * @return The node containing the minimum element in the subtree rooted at redBlackTreeNode.
      */
-    private RedBlackTreeNode treeMinimum(RedBlackTreeNode redBlackTreeNode) {
+    public RedBlackTreeNode treeMinimum(RedBlackTreeNode redBlackTreeNode) {
         while (redBlackTreeNode.leftChild != null) {
             redBlackTreeNode = redBlackTreeNode.leftChild;
+        }
+        return redBlackTreeNode;
+    }
+
+    /**
+     * Finds element in a tree whose key is a maximum.
+     * @param redBlackTreeNode The node which is a root of the subtree which needs to be searched for maximum.
+     * @return The node containing the maximum element in the subtree rooted at redBlackTreeNode.
+     */
+    public RedBlackTreeNode treeMaximum(RedBlackTreeNode redBlackTreeNode) {
+        while (redBlackTreeNode.rightChild != null) {
+            redBlackTreeNode = redBlackTreeNode.rightChild;
         }
         return redBlackTreeNode;
     }
@@ -351,5 +386,131 @@ public class RedBlackTree {
             }
         }
         return null;
+    }
+
+    /**
+     * Finds the successor of the input node in the sorted order determined by an inorder traversal.
+     * @param redBlackTreeNode The node whose successor is to be determined.
+     * @return The node with the smallest ID greater than ID of redBlackTreeNode.
+     */
+    public RedBlackTreeNode treeSuccessor(RedBlackTreeNode redBlackTreeNode) {
+        if(redBlackTreeNode == null) {
+            return null;
+        } else if(redBlackTreeNode.rightChild != null) {
+            return treeMinimum(redBlackTreeNode.rightChild);
+        } else {
+            RedBlackTreeNode nodeParent = redBlackTreeNode.parent;
+            RedBlackTreeNode nodeChild = redBlackTreeNode;
+            while (nodeParent != null && nodeChild == nodeParent.rightChild) {
+                nodeChild = nodeParent;
+                nodeParent = nodeParent.parent;
+            }
+            return nodeParent;
+        }
+    }
+
+    /**
+     * Finds the predecessor of the input node in the sorted order determined by an inorder traversal.
+     * @param redBlackTreeNode The node whose predecessor is to be determined.
+     * @return The node with the greatest ID smaller than ID of redBlackTreeNode.
+     */
+    public RedBlackTreeNode treePredecessor(RedBlackTreeNode redBlackTreeNode) {
+        if(redBlackTreeNode == null) {
+            return null;
+        } else if(redBlackTreeNode.leftChild != null) {
+            return treeMaximum(redBlackTreeNode.leftChild);
+        } else {
+            RedBlackTreeNode nodeParent = redBlackTreeNode.parent;
+            RedBlackTreeNode nodeChild = redBlackTreeNode;
+            while (nodeParent != null && nodeChild == nodeParent.leftChild) {
+                nodeChild = nodeParent;
+                nodeParent = nodeParent.parent;
+            }
+            return nodeParent;
+        }
+    }
+
+    /**
+     * Builds tree from sorted ArrayList of Events. This runs in O(n) time.
+     * @param size Number of events to be added to the tree.
+     * @param iterator This iterator has the Event objects to be read.
+     */
+    public void buildTreeFromSortedList(int size, Iterator<Event> iterator) {
+        int redLevel = 0;
+        for (int i = size - 1; i >= 0; i = i / 2 - 1) {
+            redLevel++;
+        }
+        rootNode = buildTree(0, 0, size - 1, redLevel, iterator);
+    }
+
+    /**
+     * Builds the tree by placing the middle element to current position. Places [begin; middle) elements to left
+     * subtree and (middle, end) elements to right subtree.
+     * @param currentLevel The current level of the tree.
+     * @param begin The starting index of the subtree.
+     * @param end The ending index of the subtree.
+     * @param redLevel The level at which nodes should be colored red.
+     * @param iterator The Event objects are read from this ArrayList Iterator.
+     * @return The root of the subtree.
+     */
+    private RedBlackTreeNode buildTree(int currentLevel, int begin, int end, int redLevel,
+                                       Iterator<Event> iterator) {
+        if(end < begin) {
+            return null;
+        }
+        int mid = (begin + end) / 2;
+        RedBlackTreeNode left = null;
+        if(begin < mid) {
+            left = buildTree(currentLevel + 1, begin, mid - 1, redLevel, iterator);
+        }
+        Event event = iterator.next();
+        RedBlackTreeNode middle = new RedBlackTreeNode(event.getID(), event.getCount());
+
+        if(currentLevel == redLevel) {
+            middle.nodeColor = NodeColor.RED;
+        }
+
+        if(left != null) {
+            middle.leftChild = left;
+            left.parent = middle;
+        }
+
+        if(mid < end) {
+            RedBlackTreeNode right = buildTree(currentLevel + 1, mid + 1, end, redLevel, iterator);
+            if(right != null) {
+                middle.rightChild = right;
+                right.parent = middle;
+            }
+        }
+
+        return middle;
+    }
+
+    /**
+     * Stores all nodes in the tree whose IDs are in the range between ID1 and ID2.
+     * @param rootNode The root node of the tree.
+     * @param ID1 The left limit of the range.
+     * @param ID2 The right limit of the range.
+     * @param nodesInRange The ArrayList which stores the found nodes.
+     * @return The ArrayList containing nodes between the range of ID1 and ID2.
+     */
+    public ArrayList<RedBlackTreeNode> rangeSearch(RedBlackTreeNode rootNode, int ID1, int ID2,
+                                                   ArrayList<RedBlackTreeNode> nodesInRange) {
+        if(rootNode == null) {
+            return null;
+        }
+
+        if(rootNode.ID > ID1) {
+            nodesInRange = rangeSearch(rootNode.leftChild, ID1, ID2, nodesInRange);
+        }
+
+        if(rootNode.ID >= ID1 && rootNode.ID <= ID2) {
+            nodesInRange.add(rootNode);
+        }
+
+        if(rootNode.ID < ID2) {
+            nodesInRange = rangeSearch(rootNode.rightChild, ID1, ID2, nodesInRange);
+        }
+        return nodesInRange;
     }
 }
