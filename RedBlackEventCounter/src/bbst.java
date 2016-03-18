@@ -1,5 +1,3 @@
-package edu.ufl.cop5536spring2016;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
