@@ -14,6 +14,7 @@ import java.util.Iterator;
  * 4. InRange(ID1, ID2)
  * 5. Next(theID)
  * 6. Previous(theID)
+ * @author Sayak Biswas
  */
 public class RedBlackTreeEventCounter {
     RedBlackTree redBlackTree = new RedBlackTree();
@@ -108,7 +109,8 @@ public class RedBlackTreeEventCounter {
      */
     public Event next(int ID) {
         RedBlackTree.RedBlackTreeNode redBlackTreeNode = redBlackTree.treeSuccessor(redBlackTree.treeSearch(ID));
-        return new Event(redBlackTreeNode.getID(), redBlackTreeNode.getCount());
+        return new Event((redBlackTreeNode != null) ? redBlackTreeNode.getID() : 0,
+                (redBlackTreeNode != null) ? redBlackTreeNode.getCount() : 0);
     }
 
     /**
@@ -118,6 +120,7 @@ public class RedBlackTreeEventCounter {
      */
     public Event previous(int ID) {
         RedBlackTree.RedBlackTreeNode redBlackTreeNode = redBlackTree.treePredecessor(redBlackTree.treeSearch(ID));
-        return new Event(redBlackTreeNode.getID(), redBlackTreeNode.getCount());
+        return new Event((redBlackTreeNode != null) ? redBlackTreeNode.getID() : 0,
+                (redBlackTreeNode != null) ? redBlackTreeNode.getCount() : 0);
     }
 }
