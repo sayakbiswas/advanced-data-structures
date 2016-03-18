@@ -143,37 +143,37 @@ public class RedBlackTree {
      */
     private void redBlackInsertFixUp(RedBlackTreeNode redBlackTreeNode) {
         while(redBlackTreeNode != rootNode && redBlackTreeNode.parent.nodeColor == NodeColor.RED) {
-            if(redBlackTreeNode.parent == redBlackTreeNode.parent.parent.leftChild) {
-                RedBlackTreeNode uncle = redBlackTreeNode.parent.parent.rightChild;
-                if(uncle != null && uncle.nodeColor == NodeColor.RED) {
-                    redBlackTreeNode.parent.nodeColor = NodeColor.BLACK;
-                    uncle.nodeColor = NodeColor.BLACK;
-                    redBlackTreeNode.parent.parent.nodeColor = NodeColor.RED;
-                    redBlackTreeNode = redBlackTreeNode.parent.parent;
+            if(parentOf(redBlackTreeNode) == leftChildOf(parentOf(parentOf(redBlackTreeNode)))) {
+                RedBlackTreeNode uncle = rightChildOf(parentOf(parentOf(redBlackTreeNode)));
+                if(colorOf(uncle) == NodeColor.RED) {
+                    setColor(parentOf(redBlackTreeNode), NodeColor.BLACK);
+                    setColor(uncle, NodeColor.BLACK);
+                    setColor(parentOf(parentOf(redBlackTreeNode)), NodeColor.RED);
+                    redBlackTreeNode = parentOf(parentOf(redBlackTreeNode));
                 } else {
-                    if(redBlackTreeNode == redBlackTreeNode.parent.rightChild) {
-                        redBlackTreeNode = redBlackTreeNode.parent;
+                    if(redBlackTreeNode == rightChildOf(parentOf(redBlackTreeNode))) {
+                        redBlackTreeNode = parentOf(redBlackTreeNode);
                         leftRotate(redBlackTreeNode);
                     }
-                    redBlackTreeNode.parent.nodeColor = NodeColor.BLACK;
-                    redBlackTreeNode.parent.parent.nodeColor = NodeColor.RED;
-                    rightRotate(redBlackTreeNode);
+                    setColor(parentOf(redBlackTreeNode), NodeColor.BLACK);
+                    setColor(parentOf(parentOf(redBlackTreeNode)), NodeColor.RED);
+                    rightRotate(parentOf(parentOf(redBlackTreeNode)));
                 }
             } else {
-                RedBlackTreeNode uncle = redBlackTreeNode.parent.parent.leftChild;
-                if(uncle != null && uncle.nodeColor == NodeColor.RED) {
-                    redBlackTreeNode.parent.nodeColor = NodeColor.BLACK;
-                    uncle.nodeColor = NodeColor.BLACK;
-                    redBlackTreeNode.parent.parent.nodeColor = NodeColor.RED;
-                    redBlackTreeNode = redBlackTreeNode.parent.parent;
+                RedBlackTreeNode uncle = leftChildOf(parentOf(parentOf(redBlackTreeNode)));
+                if(colorOf(uncle) == NodeColor.RED) {
+                    setColor(parentOf(redBlackTreeNode), NodeColor.BLACK);
+                    setColor(uncle, NodeColor.BLACK);
+                    setColor(parentOf(parentOf(redBlackTreeNode)), NodeColor.RED);
+                    redBlackTreeNode = parentOf(parentOf(redBlackTreeNode));
                 } else {
-                    if(redBlackTreeNode == redBlackTreeNode.parent.leftChild) {
-                        redBlackTreeNode = redBlackTreeNode.parent;
+                    if(redBlackTreeNode == leftChildOf(parentOf(redBlackTreeNode))) {
+                        redBlackTreeNode = parentOf(redBlackTreeNode);
                         rightRotate(redBlackTreeNode);
                     }
-                    redBlackTreeNode.parent.nodeColor = NodeColor.BLACK;
-                    redBlackTreeNode.parent.parent.nodeColor = NodeColor.RED;
-                    leftRotate(redBlackTreeNode);
+                    setColor(parentOf(redBlackTreeNode), NodeColor.BLACK);
+                    setColor(parentOf(parentOf(redBlackTreeNode)), NodeColor.RED);
+                    leftRotate(parentOf(parentOf(redBlackTreeNode)));
                 }
             }
         }
@@ -308,60 +308,60 @@ public class RedBlackTree {
      * @param redBlackTreeNode The root node of the subtree which needs to be re-balanced.
      */
     private void redBlackDeleteFixUp(RedBlackTreeNode redBlackTreeNode) {
-        while (redBlackTreeNode != rootNode && redBlackTreeNode.nodeColor == NodeColor.BLACK) {
-            if(redBlackTreeNode == redBlackTreeNode.parent.leftChild) {
-                RedBlackTreeNode siblingNode = redBlackTreeNode.parent.rightChild;
-                if(siblingNode.nodeColor == NodeColor.RED) {
-                    siblingNode.nodeColor = NodeColor.BLACK;
-                    redBlackTreeNode.parent.nodeColor = NodeColor.RED;
-                    leftRotate(redBlackTreeNode.parent);
-                    siblingNode = redBlackTreeNode.parent.rightChild;
+        while (redBlackTreeNode != rootNode && colorOf(redBlackTreeNode) == NodeColor.BLACK) {
+            if(redBlackTreeNode == leftChildOf(parentOf(redBlackTreeNode))) {
+                RedBlackTreeNode siblingNode = rightChildOf(parentOf(redBlackTreeNode));
+                if(colorOf(siblingNode) == NodeColor.RED) {
+                    setColor(siblingNode, NodeColor.BLACK);
+                    setColor(parentOf(redBlackTreeNode), NodeColor.RED);
+                    leftRotate(parentOf(redBlackTreeNode));
+                    siblingNode = rightChildOf(parentOf(redBlackTreeNode));
                 }
-                if(siblingNode.leftChild.nodeColor == NodeColor.BLACK
-                        && siblingNode.rightChild.nodeColor == NodeColor.BLACK) {
-                    siblingNode.nodeColor = NodeColor.RED;
-                    redBlackTreeNode = redBlackTreeNode.parent;
+                if(colorOf(leftChildOf(siblingNode)) == NodeColor.BLACK
+                        && colorOf(rightChildOf(siblingNode)) == NodeColor.BLACK) {
+                    setColor(siblingNode, NodeColor.RED);
+                    redBlackTreeNode = parentOf(redBlackTreeNode);
                 } else {
-                    if(siblingNode.rightChild.nodeColor == NodeColor.BLACK) {
-                        siblingNode.leftChild.nodeColor = NodeColor.BLACK;
-                        siblingNode.nodeColor = NodeColor.RED;
+                    if(colorOf(rightChildOf(siblingNode)) == NodeColor.BLACK) {
+                        setColor(leftChildOf(siblingNode), NodeColor.BLACK);
+                        setColor(siblingNode, NodeColor.RED);
                         rightRotate(siblingNode);
-                        siblingNode = redBlackTreeNode.parent.rightChild;
+                        siblingNode = rightChildOf(parentOf(redBlackTreeNode));
                     }
-                    siblingNode.nodeColor = redBlackTreeNode.parent.nodeColor;
-                    redBlackTreeNode.parent.nodeColor = NodeColor.BLACK;
-                    siblingNode.rightChild.nodeColor = NodeColor.BLACK;
-                    leftRotate(redBlackTreeNode.parent);
+                    setColor(siblingNode, colorOf(parentOf(redBlackTreeNode)));
+                    setColor(parentOf(redBlackTreeNode), NodeColor.BLACK);
+                    setColor(rightChildOf(siblingNode),  NodeColor.BLACK);
+                    leftRotate(parentOf(redBlackTreeNode));
                     redBlackTreeNode = rootNode;
                 }
             } else {
-                RedBlackTreeNode siblingNode = redBlackTreeNode.parent.leftChild;
-                if(siblingNode.nodeColor == NodeColor.RED) {
-                    siblingNode.nodeColor = NodeColor.BLACK;
-                    redBlackTreeNode.parent.nodeColor = NodeColor.RED;
-                    rightRotate(redBlackTreeNode.parent);
-                    siblingNode = redBlackTreeNode.parent.leftChild;
+                RedBlackTreeNode siblingNode = leftChildOf(parentOf(redBlackTreeNode));
+                if(colorOf(siblingNode) == NodeColor.RED) {
+                    setColor(siblingNode, NodeColor.BLACK);
+                    setColor(parentOf(redBlackTreeNode), NodeColor.RED);
+                    rightRotate(parentOf(redBlackTreeNode));
+                    siblingNode = leftChildOf(parentOf(redBlackTreeNode));
                 }
-                if(siblingNode.rightChild.nodeColor == NodeColor.BLACK
-                        && siblingNode.leftChild.nodeColor == NodeColor.BLACK) {
-                    siblingNode.nodeColor = NodeColor.RED;
-                    redBlackTreeNode = redBlackTreeNode.parent;
+                if(colorOf(rightChildOf(siblingNode)) == NodeColor.BLACK
+                        && colorOf(leftChildOf(siblingNode)) == NodeColor.BLACK) {
+                    setColor(siblingNode, NodeColor.RED);
+                    redBlackTreeNode = parentOf(redBlackTreeNode);
                 } else {
-                    if(siblingNode.leftChild.nodeColor == NodeColor.BLACK) {
-                        siblingNode.rightChild.nodeColor = NodeColor.BLACK;
-                        siblingNode.nodeColor = NodeColor.RED;
+                    if(colorOf(leftChildOf(siblingNode)) == NodeColor.BLACK) {
+                        setColor(rightChildOf(siblingNode), NodeColor.BLACK);
+                        setColor(siblingNode, NodeColor.RED);
                         leftRotate(siblingNode);
-                        siblingNode = redBlackTreeNode.parent.leftChild;
+                        siblingNode = leftChildOf(parentOf(redBlackTreeNode));
                     }
-                    siblingNode.nodeColor = redBlackTreeNode.parent.nodeColor;
-                    redBlackTreeNode.parent.nodeColor = NodeColor.BLACK;
-                    siblingNode.leftChild.nodeColor = NodeColor.BLACK;
-                    rightRotate(redBlackTreeNode.parent);
+                    setColor(siblingNode, colorOf(parentOf(redBlackTreeNode)));
+                    setColor(parentOf(redBlackTreeNode), NodeColor.BLACK);
+                    setColor(leftChildOf(siblingNode), NodeColor.BLACK);
+                    rightRotate(parentOf(redBlackTreeNode));
                     redBlackTreeNode = rootNode;
                 }
             }
         }
-        redBlackTreeNode.nodeColor = NodeColor.BLACK;
+        setColor(redBlackTreeNode, NodeColor.BLACK);
     }
 
     /**
@@ -510,5 +510,68 @@ public class RedBlackTree {
             nodesInRange = rangeSearch(rootNode.rightChild, ID1, ID2, nodesInRange);
         }
         return nodesInRange;
+    }
+
+    /**
+     * Returns the color of a node. This method handles null nodes.
+     * @param redBlackTreeNode The node whose color needs to be checked.
+     * @return The color of redBlackTreeNode.
+     */
+    private static NodeColor colorOf(RedBlackTreeNode redBlackTreeNode) {
+        if(redBlackTreeNode == null) {
+            return NodeColor.BLACK;
+        } else {
+            return redBlackTreeNode.nodeColor;
+        }
+    }
+
+    /**
+     * Returns the parent of a node. This method handles null nodes as well.
+     * @param redBlackTreeNode The node whose parent needs to be returned.
+     * @return The parent node of the redBlackTreeNode.
+     */
+    private static RedBlackTreeNode parentOf(RedBlackTreeNode redBlackTreeNode) {
+        if(redBlackTreeNode == null) {
+            return null;
+        } else {
+            return redBlackTreeNode.parent;
+        }
+    }
+
+    /**
+     * Sets the color of a node. This handles null nodes as well.
+     * @param redBlackTreeNode The node whose color has to be set.
+     * @param color The color that needs to be set.
+     */
+    private static void setColor(RedBlackTreeNode redBlackTreeNode, NodeColor color) {
+        if(redBlackTreeNode != null) {
+            redBlackTreeNode.nodeColor = color;
+        }
+    }
+
+    /**
+     * Returns the left child of a node. Returns null if the input node is null.
+     * @param redBlackTreeNode The node whose left child is needed.
+     * @return The left child of redBlackTreeNode.
+     */
+    private static RedBlackTreeNode leftChildOf(RedBlackTreeNode redBlackTreeNode) {
+        if(redBlackTreeNode == null) {
+            return null;
+        } else {
+            return redBlackTreeNode.leftChild;
+        }
+    }
+
+    /**
+     * Returns the right child of a node. Returns null if the input node is null.
+     * @param redBlackTreeNode The node whose right child is requested.
+     * @return The right child of redBlackTreeNode.
+     */
+    private static RedBlackTreeNode rightChildOf(RedBlackTreeNode redBlackTreeNode) {
+        if(redBlackTreeNode == null) {
+            return null;
+        } else {
+            return redBlackTreeNode.rightChild;
+        }
     }
 }

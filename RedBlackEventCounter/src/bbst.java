@@ -22,12 +22,17 @@ public class bbst {
                 int lineCount = 0;
                 eventArrayList = new ArrayList<>();
                 while (fileReader.hasNext()) {
+                    String scannedLine = fileReader.nextLine();
+                    Scanner scannedToken = new Scanner(scannedLine);
                     if (lineCount > 0) {
-                        int ID = fileReader.nextInt();
-                        int count = fileReader.nextInt();
-                        System.out.println("ID:: " + ID + " count :: " + count); //TODO: Remove
-                        Event event = new Event(ID, count);
-                        eventArrayList.add(event);
+                        while (scannedToken.hasNext()) {
+                            int ID = scannedToken.nextInt();
+                            int count = scannedToken.nextInt();
+                            System.out.println("ID:: " + ID + " count :: " + count); //TODO: Remove
+                            Event event = new Event(ID, count);
+                            eventArrayList.add(event);
+                        }
+                        scannedToken.close();
                     }
                     lineCount++;
                 }
