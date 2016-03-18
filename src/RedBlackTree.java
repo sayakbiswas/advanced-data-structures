@@ -1,5 +1,3 @@
-package edu.ufl.cop5536spring2016;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 

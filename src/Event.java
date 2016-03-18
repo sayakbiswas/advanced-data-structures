@@ -1,5 +1,3 @@
-package edu.ufl.cop5536spring2016;
-
 /**
  * Created by Sayak Biswas on 3/15/2016.
  * This class holds the events read from the input file.
