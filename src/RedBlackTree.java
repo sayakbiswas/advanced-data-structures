@@ -247,7 +247,9 @@ public class RedBlackTree {
             replacementNodeOriginalColor = replacementNode.nodeColor;
             replacementSuccessor = replacementNode.rightChild;
             if(replacementNode.parent == nodeToDelete) {
-                replacementSuccessor.parent = replacementNode;
+                if(replacementSuccessor != null) {
+                    replacementSuccessor.parent = replacementNode;
+                }
             } else {
                 redBlackTransplant(replacementNode, replacementNode.rightChild);
                 replacementNode.rightChild = nodeToDelete.rightChild;
@@ -387,44 +389,70 @@ public class RedBlackTree {
     }
 
     /**
-     * Finds the successor of the input node in the sorted order determined by an inorder traversal.
-     * @param redBlackTreeNode The node whose successor is to be determined.
-     * @return The node with the smallest ID greater than ID of redBlackTreeNode.
+     * Finds the successor of the input ID in the sorted order determined by an inorder traversal.
+     * @param redBlackTreeNode The subtree node to be searched for successor.
+     * @param ID The ID whose successor is to be determined.
+     * @return The node with the smallest ID greater than the input ID.
      */
-    public RedBlackTreeNode treeSuccessor(RedBlackTreeNode redBlackTreeNode) {
+    public RedBlackTreeNode treeSuccessor(RedBlackTreeNode redBlackTreeNode, int ID) {
         if(redBlackTreeNode == null) {
             return null;
-        } else if(redBlackTreeNode.rightChild != null) {
-            return treeMinimum(redBlackTreeNode.rightChild);
-        } else {
-            RedBlackTreeNode nodeParent = redBlackTreeNode.parent;
-            RedBlackTreeNode nodeChild = redBlackTreeNode;
-            while (nodeParent != null && nodeChild == nodeParent.rightChild) {
-                nodeChild = nodeParent;
-                nodeParent = nodeParent.parent;
-            }
-            return nodeParent;
         }
+        if(redBlackTreeNode.ID == ID) {
+            if(redBlackTreeNode.rightChild != null) {
+                return treeMinimum(redBlackTreeNode.rightChild);
+            } else {
+                RedBlackTreeNode parentNode = redBlackTreeNode.parent;
+                RedBlackTreeNode childNode = redBlackTreeNode;
+                while (parentNode != null && childNode == parentNode.rightChild) {
+                    childNode = parentNode;
+                    parentNode = parentNode.parent;
+                }
+                return parentNode;
+            }
+        }
+        if(ID < redBlackTreeNode.ID) {
+            RedBlackTreeNode temp = treeSuccessor(redBlackTreeNode.leftChild, ID);
+            if (temp != null) {
+                return temp;
+            } else {
+                return redBlackTreeNode;
+            }
+        }
+        return treeSuccessor(redBlackTreeNode.rightChild, ID);
     }
 
     /**
-     * Finds the predecessor of the input node in the sorted order determined by an inorder traversal.
-     * @param redBlackTreeNode The node whose predecessor is to be determined.
-     * @return The node with the greatest ID smaller than ID of redBlackTreeNode.
+     * Finds the predecessor of the input ID in the sorted order determined by an inorder traversal.
+     * @param redBlackTreeNode The subtree node to be searched for predecessor.
+     * @param ID The ID whose predecessor is to be determined.
+     * @return The node with the greatest ID smaller than the input ID.
      */
-    public RedBlackTreeNode treePredecessor(RedBlackTreeNode redBlackTreeNode) {
+    public RedBlackTreeNode treePredecessor(RedBlackTreeNode redBlackTreeNode, int ID) {
         if(redBlackTreeNode == null) {
             return null;
-        } else if(redBlackTreeNode.leftChild != null) {
-            return treeMaximum(redBlackTreeNode.leftChild);
-        } else {
-            RedBlackTreeNode nodeParent = redBlackTreeNode.parent;
-            RedBlackTreeNode nodeChild = redBlackTreeNode;
-            while (nodeParent != null && nodeChild == nodeParent.leftChild) {
-                nodeChild = nodeParent;
-                nodeParent = nodeParent.parent;
+        }
+        if(redBlackTreeNode.ID == ID) {
+            if(redBlackTreeNode.leftChild != null) {
+                return treeMaximum(redBlackTreeNode.leftChild);
+            } else {
+                RedBlackTreeNode parentNode = redBlackTreeNode.parent;
+                RedBlackTreeNode childNode = redBlackTreeNode;
+                while (parentNode != null && childNode == parentNode.leftChild) {
+                    childNode = parentNode;
+                    parentNode = parentNode.parent;
+                }
+                return parentNode;
             }
-            return nodeParent;
+        }
+        if(ID < redBlackTreeNode.ID) {
+            return treePredecessor(redBlackTreeNode.leftChild, ID);
+        }
+        RedBlackTreeNode temp = treePredecessor(redBlackTreeNode.rightChild, ID);
+        if(temp != null) {
+            return temp;
+        } else {
+            return redBlackTreeNode;
         }
     }
 
@@ -494,21 +522,20 @@ public class RedBlackTree {
      */
     public ArrayList<RedBlackTreeNode> rangeSearch(RedBlackTreeNode rootNode, int ID1, int ID2,
                                                    ArrayList<RedBlackTreeNode> nodesInRange) {
-        if(rootNode == null) {
-            return null;
+        if(rootNode != null) {
+            if(rootNode.ID > ID1) {
+                nodesInRange = rangeSearch(leftChildOf(rootNode), ID1, ID2, nodesInRange);
+            }
+
+            if(rootNode.ID >= ID1 && rootNode.ID <= ID2) {
+                nodesInRange.add(rootNode);
+            }
+
+            if(rootNode.ID < ID2) {
+                nodesInRange = rangeSearch(rightChildOf(rootNode), ID1, ID2, nodesInRange);
+            }
         }
 
-        if(rootNode.ID > ID1) {
-            nodesInRange = rangeSearch(rootNode.leftChild, ID1, ID2, nodesInRange);
-        }
-
-        if(rootNode.ID >= ID1 && rootNode.ID <= ID2) {
-            nodesInRange.add(rootNode);
-        }
-
-        if(rootNode.ID < ID2) {
-            nodesInRange = rangeSearch(rootNode.rightChild, ID1, ID2, nodesInRange);
-        }
         return nodesInRange;
     }
 

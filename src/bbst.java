@@ -28,7 +28,6 @@ public class bbst {
                         while (scannedToken.hasNext()) {
                             int ID = scannedToken.nextInt();
                             int count = scannedToken.nextInt();
-                            System.out.println("ID:: " + ID + " count :: " + count); //TODO: Remove
                             Event event = new Event(ID, count);
                             eventArrayList.add(event);
                         }
@@ -78,7 +77,9 @@ public class bbst {
                         } else if("previous".equalsIgnoreCase(command)) {
                             int ID = stringScanner.nextInt();
                             Event previousEvent = redBlackTreeEventCounter.previous(ID);
-                            System.out.println(previousEvent.getID() + " " + previousEvent.getID());
+                            System.out.println(previousEvent.getID() + " " + previousEvent.getCount());
+                        } else if("quit".equalsIgnoreCase(command)) {
+                            System.exit(0);
                         } else {
                             System.out.println("Wrong input command!");
                         }

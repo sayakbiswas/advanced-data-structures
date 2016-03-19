@@ -106,7 +106,7 @@ public class RedBlackTreeEventCounter {
      * @return The next event
      */
     public Event next(int ID) {
-        RedBlackTree.RedBlackTreeNode redBlackTreeNode = redBlackTree.treeSuccessor(redBlackTree.treeSearch(ID));
+        RedBlackTree.RedBlackTreeNode redBlackTreeNode = redBlackTree.treeSuccessor(redBlackTree.getRootNode(), ID);
         return new Event((redBlackTreeNode != null) ? redBlackTreeNode.getID() : 0,
                 (redBlackTreeNode != null) ? redBlackTreeNode.getCount() : 0);
     }
@@ -117,7 +117,7 @@ public class RedBlackTreeEventCounter {
      * @return The previous event.
      */
     public Event previous(int ID) {
-        RedBlackTree.RedBlackTreeNode redBlackTreeNode = redBlackTree.treePredecessor(redBlackTree.treeSearch(ID));
+        RedBlackTree.RedBlackTreeNode redBlackTreeNode = redBlackTree.treePredecessor(redBlackTree.getRootNode(), ID);
         return new Event((redBlackTreeNode != null) ? redBlackTreeNode.getID() : 0,
                 (redBlackTreeNode != null) ? redBlackTreeNode.getCount() : 0);
     }
