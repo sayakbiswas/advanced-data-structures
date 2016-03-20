@@ -18,12 +18,12 @@ public class RedBlackTreeEventCounter {
     RedBlackTree redBlackTree = new RedBlackTree();
 
     /**
-     * Builds the event counter from the list of Event objects. This runs in O(n) time.
+     * Builds the event counter from the list of RedBlackTreeNode objects. This runs in O(n) time.
      * @param eventArrayList The list of events
      */
-    public void buildEventCounter(ArrayList<Event> eventArrayList) {
+    public void buildEventCounter(ArrayList<RedBlackTree.RedBlackTreeNode> eventArrayList) {
         if(eventArrayList != null && eventArrayList.size() > 0) {
-            Iterator<Event> iterator = eventArrayList.iterator();
+            Iterator<RedBlackTree.RedBlackTreeNode> iterator = eventArrayList.iterator();
             redBlackTree.buildTreeFromSortedList(eventArrayList.size(), iterator);
         }
     }
@@ -105,10 +105,8 @@ public class RedBlackTreeEventCounter {
      * @param ID The event ID whose next is to be found.
      * @return The next event
      */
-    public Event next(int ID) {
-        RedBlackTree.RedBlackTreeNode redBlackTreeNode = redBlackTree.treeSuccessor(redBlackTree.getRootNode(), ID);
-        return new Event((redBlackTreeNode != null) ? redBlackTreeNode.getID() : 0,
-                (redBlackTreeNode != null) ? redBlackTreeNode.getCount() : 0);
+    public RedBlackTree.RedBlackTreeNode next(int ID) {
+        return redBlackTree.treeSuccessor(redBlackTree.getRootNode(), ID);
     }
 
     /**
@@ -116,9 +114,7 @@ public class RedBlackTreeEventCounter {
      * @param ID The ID whose previous is to be found.
      * @return The previous event.
      */
-    public Event previous(int ID) {
-        RedBlackTree.RedBlackTreeNode redBlackTreeNode = redBlackTree.treePredecessor(redBlackTree.getRootNode(), ID);
-        return new Event((redBlackTreeNode != null) ? redBlackTreeNode.getID() : 0,
-                (redBlackTreeNode != null) ? redBlackTreeNode.getCount() : 0);
+    public RedBlackTree.RedBlackTreeNode previous(int ID) {
+        return redBlackTree.treePredecessor(redBlackTree.getRootNode(), ID);
     }
 }

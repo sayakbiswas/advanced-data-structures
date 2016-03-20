@@ -25,7 +25,7 @@ public class RedBlackTree {
      * 3. References to left and right children
      * 4. Color
      */
-    class RedBlackTreeNode {
+    static class RedBlackTreeNode {
 
         /**
          * Holds the ID of the node
@@ -457,11 +457,11 @@ public class RedBlackTree {
     }
 
     /**
-     * Builds tree from sorted ArrayList of Events. This runs in O(n) time.
+     * Builds tree from sorted ArrayList of RedBlackTreeNode objects. This runs in O(n) time.
      * @param size Number of events to be added to the tree.
      * @param iterator This iterator has the Event objects to be read.
      */
-    public void buildTreeFromSortedList(int size, Iterator<Event> iterator) {
+    public void buildTreeFromSortedList(int size, Iterator<RedBlackTreeNode> iterator) {
         int redLevel = 0;
         for (int i = size - 1; i >= 0; i = i / 2 - 1) {
             redLevel++;
@@ -480,7 +480,7 @@ public class RedBlackTree {
      * @return The root of the subtree.
      */
     private RedBlackTreeNode buildTree(int currentLevel, int begin, int end, int redLevel,
-                                       Iterator<Event> iterator) {
+                                       Iterator<RedBlackTreeNode> iterator) {
         if(end < begin) {
             return null;
         }
@@ -489,8 +489,9 @@ public class RedBlackTree {
         if(begin < mid) {
             left = buildTree(currentLevel + 1, begin, mid - 1, redLevel, iterator);
         }
-        Event event = iterator.next();
-        RedBlackTreeNode middle = new RedBlackTreeNode(event.getID(), event.getCount());
+        /*Event event = iterator.next();
+        RedBlackTreeNode middle = new RedBlackTreeNode(event.getID(), event.getCount());*/
+        RedBlackTreeNode middle = iterator.next();
 
         if(currentLevel == redLevel) {
             middle.nodeColor = NodeColor.RED;
