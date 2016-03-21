@@ -489,8 +489,7 @@ public class RedBlackTree {
         if(begin < mid) {
             left = buildTree(currentLevel + 1, begin, mid - 1, redLevel, iterator);
         }
-        /*Event event = iterator.next();
-        RedBlackTreeNode middle = new RedBlackTreeNode(event.getID(), event.getCount());*/
+
         RedBlackTreeNode middle = iterator.next();
 
         if(currentLevel == redLevel) {

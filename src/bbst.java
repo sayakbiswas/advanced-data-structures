@@ -88,7 +88,9 @@ public class bbst {
                             System.out.println(((previousEvent != null) ? previousEvent.getID() : 0) + " "
                                     + ((previousEvent != null) ? previousEvent.getCount() : 0));
                         } else if("quit".equalsIgnoreCase(command)) {
-                            break;
+                            stringScanner.close();
+                            scanner.close();
+                            System.exit(0);
                         } else {
                             System.out.println("Wrong input command!");
                         }
