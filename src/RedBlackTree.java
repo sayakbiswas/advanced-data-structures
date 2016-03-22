@@ -22,7 +22,7 @@ public class RedBlackTree {
      * This inner class used to represent the nodes in a Red Black Tree. A node stores the below information:
      * 1. ID
      * 2. count
-     * 3. References to left and right children
+     * 3. References to left and right children and the parent of the node.
      * 4. Color
      */
     static class RedBlackTreeNode {
