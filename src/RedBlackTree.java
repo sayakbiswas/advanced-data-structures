@@ -278,7 +278,9 @@ public class RedBlackTree {
         } else {
             nodeToReplace.parent.rightChild = nodeToReplaceWith;
         }
-        nodeToReplaceWith.parent = nodeToReplace.parent;
+        if(nodeToReplaceWith != null) {
+            nodeToReplaceWith.parent = nodeToReplace.parent;
+        }
     }
 
     /**
